@@ -12,7 +12,7 @@ In the feature extractor, we introduce the auxiliary generator and atrous convol
 
 ## Visualization
 <p align="center">
- <img src="https://github.com/come880412/CTGAN/blob/main/img/visualization.png" width=50% height=50%>
+ <img src="https://github.com/come880412/CTGAN/blob/main/img/visualization.jpg" width=50% height=50%>
 </p>
 
 ## User instructions
