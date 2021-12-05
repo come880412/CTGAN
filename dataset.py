@@ -8,7 +8,7 @@ import torch
 from utils import heatmap
 import cv2
 
-class Sentinel2(Dataset):
+class Sen2_MTC(Dataset):
     def __init__(self, opt, mode):
         self.filepair = []
         if mode == 'train':

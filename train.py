@@ -1,7 +1,7 @@
 import numpy as np
 from torch.serialization import save
 from model.CTGAN import CTGAN_Generator, CTGAN_Discriminator
-from dataset import Sentinel2
+from dataset import Sen2_MTC
 from torch.utils.data import DataLoader
 import torch.nn as nn
 import random
@@ -57,7 +57,7 @@ def train(opt, model_GEN, model_DIS, cloud_detection_model, optimizer_G, optimiz
     lr = optimizer_G.param_groups[0]['lr']
     print('learning rate = %.7f' % lr)
     for epoch in range(opt.initial_epoch, opt.n_epochs):
-        train_data = Sentinel2(opt, 'train')
+        train_data = Sen2_MTC(opt, 'train')
         train_loader = DataLoader(train_data, batch_size=opt.batch_size,shuffle=True, num_workers=opt.n_cpu)
         pbar = tqdm.tqdm(total=len(train_loader), ncols=0, desc="Train[%d/%d]"%(epoch, opt.n_epochs), unit=" step")
         model_GEN.train()
@@ -234,7 +234,7 @@ if __name__ == "__main__":
     random_seed_general = 412
     random.seed(random_seed_general)  # random package
 
-    val_data = Sentinel2(opt, opt.data_mode)
+    val_data = Sen2_MTC(opt, opt.data_mode)
     val_loader = DataLoader(val_data, batch_size=1,shuffle=False, num_workers=opt.n_cpu)
 
     print('Load cloud_detection_model')

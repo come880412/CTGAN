@@ -1,7 +1,7 @@
 import numpy as np
 from skimage.util.arraycrop import crop
 from model.CTGAN import CTGAN_Generator
-from dataset import Sentinel2
+from dataset import Sen2_MTC
 from torch.utils.data import DataLoader
 import random
 import argparse
@@ -70,7 +70,7 @@ if __name__ == "__main__":
     random_seed_general = 412
     random.seed(random_seed_general)  # random package
     os.makedirs("%s/%s" %(opt.predict_image_path, opt.test_mode) , exist_ok=True)
-    test_data = Sentinel2(opt, opt.test_mode)
+    test_data = Sen2_MTC(opt, opt.test_mode)
     test_loader = DataLoader(test_data, batch_size=1,shuffle=False, num_workers=opt.n_cpu)
 
     """define model & optimizer"""
