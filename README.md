@@ -15,8 +15,7 @@ In the feature extractor, we introduce the auxiliary generator and atrous convol
  <img src="https://github.com/come880412/CTGAN/blob/main/img/visualization.jpg" width=50% height=50%>
 </p>
 
-## User instructions
-### Getting started
+## Getting started
 - Clone this repo to your local
 ``` bash
 git clone https://github.com/come880412/CTGAN.git
