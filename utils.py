@@ -107,15 +107,15 @@ class GANLoss(nn.Module):
         if target_is_real:
             target_tensor = self.real_label
             target_tensor = target_tensor.expand_as(prediction).clone()
-            real_label_noise = (torch.rand(prediction.shape[0], 1, 1, 1) - 0.5) * 6.0
-            real_label_noise = real_label_noise.cuda()
-            target_tensor += real_label_noise
+            # real_label_noise = (torch.rand(prediction.shape[0], 1, 1, 1) - 0.5) * 6.0
+            # real_label_noise = real_label_noise.cuda()
+            # target_tensor += real_label_noise
         else:
             target_tensor = self.fake_label
             target_tensor = target_tensor.expand_as(prediction).clone()
-            fake_label_noise = torch.rand(prediction.shape[0], 1, 1, 1) * 3.0
-            fake_label_noise = fake_label_noise.cuda()
-            target_tensor += fake_label_noise
+            # fake_label_noise = torch.rand(prediction.shape[0], 1, 1, 1) * 3.0
+            # fake_label_noise = fake_label_noise.cuda()
+            # target_tensor += fake_label_noise
         return target_tensor
 
     def __call__(self, prediction, target_is_real):
