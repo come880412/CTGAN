@@ -53,13 +53,13 @@ def test_and_visualization(opt, model_GEN, test_loader):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     """train_model"""
-    parser.add_argument("--gen_checkpoint_path", type=str, default='./checkpoints/CTGAN-Sen2_MTC/G_epoch7_PSNR21.259.pth', help="which checkpoint you want to use for generator")
+    parser.add_argument("--gen_checkpoint_path", type=str, default='./checkpoints/CTGAN-Sen2_MTC/G_epoch97_PSNR21.259.pth', help="which checkpoint you want to use for generator")
     parser.add_argument("--n_cpu", type=int, default=0, help="number of cpu threads to use during batch generation")
     parser.add_argument("--batch_size", type=int, default=1, help="size of the batches")
     """base_options"""
     parser.add_argument("--test_mode", type=str, default='test', help="which data_mode you want to use?(val/test)")
-    parser.add_argument("--val_path", type=str, default='../../../dataset/multi_temporal_Sentinel2/val.txt', help="path to txt(val.txt)")
-    parser.add_argument("--test_path", type=str, default='../../../dataset/multi_temporal_Sentinel2/test.txt', help="path to txt(test.txt)")
+    parser.add_argument("--val_path", type=str, default='../../../dataset/Sen2_MTC/val.txt', help="path to txt(val.txt)")
+    parser.add_argument("--test_path", type=str, default='../../../dataset/Sen2_MTC/test.txt', help="path to txt(test.txt)")
     parser.add_argument("--in_channel", type=int, default=4, help="the number of input channels")
     parser.add_argument("--image_size", type=int, default=256, help="image size")
     parser.add_argument("--crop_size", type=int, default=256, help="crop size")
