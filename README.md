@@ -16,6 +16,12 @@ In the feature extractor, we introduce the auxiliary generator and atrous convol
 </p>
 
 ## User instructions
+### Getting started
+- Clone this repo to your local
+``` bash
+git clone https://github.com/come880412/CTGAN.git
+cd CTGAN
+```
 ### Computer equipments
 - System: Ubuntu20.04
 - Python version: Python 3.6 or higher
