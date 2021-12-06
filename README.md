@@ -22,25 +22,31 @@ In the feature extractor, we introduce the auxiliary generator and atrous convol
 - Training:\
   CPU: Intel(R) Xeon(R) Gold 5218 CPU @ 2.30GHz\
   RAM: 256GB\
-  GPU: NVIDIA GeForce RTX 3090 24GB\
+  GPU: NVIDIA GeForce RTX 3090 24GB
 
 ### Install Packages
-Please see the ```requirements.txt ``` for more details.
+Please see the ```requirements.txt``` for more details.
 
 ### Prepare data
-#### Sen2_MTC
-Please download the dataset from [Sen2_MTC](https://drive.google.com/drive/folders/1xUmr8wTWXPnINKlxr0d0l-q48KAph8EO?usp=sharing).\
-The dataset is collected from the public-avalible Sentinel-2 by ourselves. There are 50 non-overlap tiles, each has 70 images with size = (256, 256), channels = 4 (R, G, B, NIR) and pixel value range [0, 10000].
 
-#### STGAN dataset
-Please download the dataset from [STGAN dataset](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/BSETKZ).
+Please download the dataset from [Sen2_MTC](https://drive.google.com/drive/folders/1xUmr8wTWXPnINKlxr0d0l-q48KAph8EO?usp=sharing) and [STGAN dataset](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/BSETKZ).\
+- Sen2_MTC is collected from the public-avalible Sentinel-2 by ourselves. There are 50 non-overlap tiles, each has 70 images with size = (256, 256), channels = 4 (R, G, B, NIR) and pixel value range [0, 10000].
 
 ### Pretrained model
 We share two CTGAN pretrained models, one is trained on Sen2_MTC, another is trained on the STGAN dataset.
-[CTGAN_Sen2](https://drive.google.com/drive/folders/1-kOSEhogEvmataXAdM3Zq2B_5oPk7tV0?usp=sharing)   [CTGAN_STGAN_dataset](https://drive.google.com/drive/folders/19EiiqATFhJwv19RQszrfcPSh0yXr_GqJ?usp=sharing)
+[CTGAN_Sen2](https://drive.google.com/drive/folders/1-kOSEhogEvmataXAdM3Zq2B_5oPk7tV0?usp=sharing)   
+[CTGAN_STGAN_dataset](https://drive.google.com/drive/folders/19EiiqATFhJwv19RQszrfcPSh0yXr_GqJ?usp=sharing)
 
 ### Inference
-```python test.py  --gen_checkpoint_path path/to/model --val_path path/to/val.txt --test_path path/to/test.txt```
+- You should first download the pretrained models from [Pretrained](###Pretrained-model) or train CTGAN by yourself.
+``` bash
+python test.py  --gen_checkpoint_path path/to/model --val_path path/to/val.txt --test_path path/to/test.txt
+```
 
 ### Training
-```python train.py --train_path path/to/train.txt --val_path path/to/val.txt --dataset_name Sen2_MTC_CTGAN --batch_size 4```
+- Train from scratch
+``` bash
+python train.py --train_path path/to/train.txt --val_path path/to/val.txt --dataset_name Sen2_MTC_CTGAN --batch_size 4
+```
+- If your D_loss is approximately zero, you should add the noise term on the ground-truth label of the discriminator. (see ```utils.py``` for more details.)
+- You can monitor the training process using ```$ tensorboard --logdir=runs``` and then go to the URL [http://localhost:6006/](http://localhost:6006/)
