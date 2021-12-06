@@ -39,7 +39,7 @@ We share two CTGAN pretrained models, one is trained on Sen2_MTC, another is tra
 [CTGAN_STGAN_dataset](https://drive.google.com/drive/folders/19EiiqATFhJwv19RQszrfcPSh0yXr_GqJ?usp=sharing)
 
 ### Inference
-- You should first download the pretrained models from [Pretrained](###Pretrained-model) or train CTGAN by yourself.
+- You should first download the pretrained models from [Pretrained model](###Pretrained-model) or train CTGAN by yourself.
 ``` bash
 python test.py  --gen_checkpoint_path path/to/model --val_path path/to/val.txt --test_path path/to/test.txt
 ```
