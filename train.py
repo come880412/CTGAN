@@ -1,5 +1,6 @@
 import numpy as np
 from torch.serialization import save
+from torch.optim.lr_scheduler import CosineAnnealingLR
 from model.CTGAN import CTGAN_Generator, CTGAN_Discriminator
 from dataset import Sen2_MTC
 from torch.utils.data import DataLoader
@@ -13,7 +14,6 @@ from tensorboardX import SummaryWriter
 from utils import *
 import os
 import cv2
-from torch.optim.lr_scheduler import LambdaLR
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -23,6 +23,7 @@ def train(opt, model_GEN, model_DIS, cloud_detection_model, optimizer_G, optimiz
     cuda = True if torch.cuda.is_available() else False
 
     # Define loss functions
+    noise = False
     criterionGAN = GANLoss(opt.gan_mode)
     criterionL1 = torch.nn.L1Loss()
     criterionMSE = nn.MSELoss()
@@ -43,11 +44,8 @@ def train(opt, model_GEN, model_DIS, cloud_detection_model, optimizer_G, optimiz
         model_DIS = model_DIS.cuda()
 
     """lr_scheduler"""
-    def lambda_rule(epoch):
-            lr_l = 1.0 - max(0, epoch + 1 - opt.lr_decay) / float(opt.lr_decay + 1)
-            return lr_l
-    scheduler_G = LambdaLR(optimizer_G, lr_lambda=lambda_rule)
-    scheduler_D = LambdaLR(optimizer_D, lr_lambda=lambda_rule)
+    scheduler_G = CosineAnnealingLR(optimizer_G, T_max=opt.n_epochs, eta_min=1e-6)
+    scheduler_D = CosineAnnealingLR(optimizer_D, T_max=opt.n_epochs, eta_min=1e-6)
     
     """training"""
     train_update = 0
@@ -67,9 +65,10 @@ def train(opt, model_GEN, model_DIS, cloud_detection_model, optimizer_G, optimiz
         L1_total = 0
         for real_A, real_B, _ in train_loader:
             real_A[0], real_A[1], real_A[2], real_B = real_A[0].cuda(), real_A[1].cuda(), real_A[2].cuda(), real_B.cuda()
-            M0, _, _ = cloud_detection_model(real_A[0])
-            M1, _, _ = cloud_detection_model(real_A[1])
-            M2, _, _ = cloud_detection_model(real_A[2])
+            with torch.no_grad():
+                M0, _, _ = cloud_detection_model(real_A[0])
+                M1, _, _ = cloud_detection_model(real_A[1])
+                M2, _, _ = cloud_detection_model(real_A[2])
 
             real_A_combined = torch.cat((real_A[0], real_A[1], real_A[2]), 1).cuda()
             """forward generator"""
@@ -82,12 +81,12 @@ def train(opt, model_GEN, model_DIS, cloud_detection_model, optimizer_G, optimiz
             # Fake 
             fake_AB = torch.cat((real_A_combined, fake_B), 1)
             pred_fake = model_DIS(fake_AB.detach())
-            loss_D_fake = criterionGAN(pred_fake, False)
+            loss_D_fake = criterionGAN(pred_fake, False, noise)
 
             # Real
             real_AB = torch.cat((real_A_combined, real_B), 1)
             pred_real = model_DIS(real_AB)
-            loss_D_real = criterionGAN(pred_real, True)
+            loss_D_real = criterionGAN(pred_real, True, noise)
 
             # Combine loss and calculate gradients
             loss_D = (loss_D_fake + loss_D_real) * 0.5
@@ -101,7 +100,7 @@ def train(opt, model_GEN, model_DIS, cloud_detection_model, optimizer_G, optimiz
             # First, G(A) should fake the discriminator
             fake_AB = torch.cat((real_A_combined, fake_B), 1)
             pred_fake = model_DIS(fake_AB)
-            loss_G_GAN = criterionGAN(pred_fake, True)
+            loss_G_GAN = criterionGAN(pred_fake, True, noise)
 
             # Second, G(A) = B
             loss_G_L1 = criterionL1(fake_B, real_B) * opt.lambda_L1
@@ -198,15 +197,15 @@ def valid(opt, model_GEN, val_loader, writer, epoch):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     """train_model"""
-    parser.add_argument("--n_epochs", type=int, default=120, help="number of epochs you want to train")
+    parser.add_argument("--n_epochs", type=int, default=100, help="number of epochs you want to train")
     parser.add_argument("--initial_epoch", type=int, default=0, help="Start epoch")
-    parser.add_argument("--lr_decay", type=int, default=60, help="Start to lr_decay")
     parser.add_argument("--gan_mode", type=str, default='lsgan', help="gan mode you want to use(lsgan/vanilla)")
     parser.add_argument("--optimizer", type=str, default='Adam', help="optimizer you want to use(Adam/SGD)")
     parser.add_argument("--gen_path", type=str, default='./checkpoints/CTGAN-Sen2_MTC/G_epoch97_PSNR21.259.pth', help="path to the model of generator")
     parser.add_argument("--dis_path", type=str, default='./checkpoints/CTGAN-Sen2_MTC/D_epoch97_PSNR21.259.pth', help="path to the model of discriminator")
     parser.add_argument("--lr", type=float, default=5e-4, help="learning rate")   
-    parser.add_argument("--n_cpu", type=int, default=0, help="number of cpu threads to use during batch generation")
+    parser.add_argument("--n_cpu", type=int, default=8, help="number of cpu threads to use during batch generation")
+    parser.add_argument("--manual_seed", type=int, default=512, help="random_seed you want")
     parser.add_argument("--batch_size", type=int, default=2, help="size of the batches")
     """base_options"""
     parser.add_argument("--cloud_model_path", type=str, default='./checkpoints/Feature_Extrator_FS2.pth', help="path to cloud_detection_model")
@@ -225,14 +224,20 @@ if __name__ == "__main__":
     parser.add_argument('--lambda_L1', type=float, default=100.0, help='weight for L1 loss')
     parser.add_argument('--lambda_aux', type=float, default=50.0, help='weight for aux loss')
     parser.add_argument("--gpu_id", type=str, default='0', help="gpu id")
-    opt = parser.parse_args()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+    opt = parser.parse_args()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
     print(opt)
     os.environ["CUDA_VISIBLE_DEVICES"] = opt.gpu_id
     os.makedirs("%s/%s/%s" % (opt.save_model_path, opt.dataset_name, opt.data_mode), exist_ok=True)
     os.makedirs("%s/%s" % (opt.predict_image_path, opt.data_mode) , exist_ok=True)
 
-    random_seed_general = 412
-    random.seed(random_seed_general)  # random package
+    random_seed_general = opt.manual_seed
+    torch.manual_seed(random_seed_general)
+    torch.cuda.manual_seed(random_seed_general)
+    torch.cuda.manual_seed_all(random_seed_general)
+    np.random.seed(random_seed_general)
+    random.seed(random_seed_general)
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True
 
     val_data = Sen2_MTC(opt, opt.data_mode)
     val_loader = DataLoader(val_data, batch_size=1,shuffle=False, num_workers=opt.n_cpu)
