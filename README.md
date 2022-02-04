@@ -54,5 +54,5 @@ python test.py  --gen_checkpoint_path path/to/model --val_path path/to/val.txt -
 ``` bash
 python train.py --train_path path/to/train.txt --val_path path/to/val.txt --dataset_name Sen2_MTC_CTGAN --batch_size 4
 ```
-- If your D_loss is approximately zero, you should add the noise term on the ground-truth label of the discriminator. (see ```utils.py``` for more details.)
 - You can monitor the training process using ```$ tensorboard --logdir=runs``` and then go to the URL [http://localhost:6006/](http://localhost:6006/)
+- If you have any implementation problems, please feel free to e-mail me! come880412@gmail.com
