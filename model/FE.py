@@ -19,23 +19,6 @@ class Bottleneck(nn.Module):
     def forward(self, input):
         return self.bottleneck(input)
 
-class ResidualBlock(nn.Module):
-    def __init__(self, dim):
-        super(ResidualBlock, self).__init__()
-        self.conv_block = nn.Sequential(
-            nn.Conv2d(dim, dim, kernel_size=3, padding=1, bias=False),
-            nn.BatchNorm2d(dim),
-            nn.ReLU(True),
-            nn.Dropout(0.5),
-            nn.Conv2d(dim, dim, kernel_size=3, padding=1, bias=False),
-            nn.BatchNorm2d(dim),
-            nn.ReLU(True)
-        )
-
-    def forward(self, x):
-        out = x + self.conv_block(x)
-        return out
-
 class ASPP(nn.Module):
     def __init__(self, in_channels, hidden_channel, atrous_rates):
         super(ASPP, self).__init__()
@@ -93,6 +76,8 @@ class Feature_Extractor(nn.Module):
             nn.ReLU(True)
             )
         self.ReLU = nn.ReLU(True)
+        self.tanh = nn.Tanh()
+        
         self.cloud_detection = Cloud_Detection_Module(dim)
         self.bottle1 = Bottleneck(dim)
         self.bottle2 = Bottleneck(dim)
@@ -119,6 +104,6 @@ class Feature_Extractor(nn.Module):
 
         out = self.ReLU(self.bottle6(out) + out)
         out = self.ASPP(out)
-        pred = self.aux_conv(out)
+        pred = self.tanh(self.aux_conv(out))
 
         return cloud_mask2, out, pred
