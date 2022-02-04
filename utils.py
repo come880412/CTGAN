@@ -102,24 +102,26 @@ class GANLoss(nn.Module):
         elif gan_mode == 'vanilla':
             self.loss = nn.BCEWithLogitsLoss()
 
-    def get_target_tensor(self, prediction, target_is_real):
+    def get_target_tensor(self, prediction, target_is_real, noise):
 
         if target_is_real:
             target_tensor = self.real_label
             target_tensor = target_tensor.expand_as(prediction).clone()
-            # real_label_noise = (torch.rand(prediction.shape[0], 1, 1, 1) - 0.5) * 6.0
-            # real_label_noise = real_label_noise.cuda()
-            # target_tensor += real_label_noise
+            if noise:
+                real_label_noise = (torch.rand(prediction.shape[0], 1, 1, 1) - 0.5) * 6.0
+                real_label_noise = real_label_noise.cuda()
+                target_tensor += real_label_noise
         else:
             target_tensor = self.fake_label
             target_tensor = target_tensor.expand_as(prediction).clone()
-            # fake_label_noise = torch.rand(prediction.shape[0], 1, 1, 1) * 3.0
-            # fake_label_noise = fake_label_noise.cuda()
-            # target_tensor += fake_label_noise
+            if noise:
+                fake_label_noise = torch.rand(prediction.shape[0], 1, 1, 1) * 3.0
+                fake_label_noise = fake_label_noise.cuda()
+                target_tensor += fake_label_noise
         return target_tensor
 
-    def __call__(self, prediction, target_is_real):
+    def __call__(self, prediction, target_is_real, noise):
         if self.gan_mode in ['lsgan', 'vanilla']:
-            target_tensor = self.get_target_tensor(prediction, target_is_real)
+            target_tensor = self.get_target_tensor(prediction, target_is_real, noise)
             loss = self.loss(prediction, target_tensor)
         return loss
