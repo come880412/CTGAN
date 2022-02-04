@@ -4,7 +4,7 @@ ICIP 2022: TBD
 ## Proposed model
 ### Generator
 The overall structure of our proposed CTGAN is illustrated below. We focus more on the design of the feature extractor and processing of the sequential features. We refer to the conformer module, the modified version of Transformer, intending to make the downsampled sequential features find the most critical representation.
-<img src="https://github.com/come880412/CTGAN/blob/main/img/Generator.png" width=100% height=100%>
+<img src="https://github.com/come880412/CTGAN/blob/main/img/Generator.jpg" width=100% height=100%>
 
 ### Feature Extractor
 In the feature extractor, we introduce the auxiliary generator and atrous convolution. The former makes the feature extractor converge faster, while the latter enables a larger receptive field in the early stage. In addition, we design a module for detecting the cloud_mask, using it to keep the weight of the cloud-free regions while throwing out the weight of cloudy regions.
