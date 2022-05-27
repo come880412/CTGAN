@@ -34,14 +34,12 @@ Please see the ```requirements.txt``` for more details.
 
 ### Prepare data
 
-Please download the dataset from [Sen2_MTC](https://drive.google.com/drive/folders/1xUmr8wTWXPnINKlxr0d0l-q48KAph8EO?usp=sharing) and [STGAN dataset](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/BSETKZ).
+Please download the dataset from [Sen2_MTC](https://drive.google.com/drive/folders/1xUmr8wTWXPnINKlxr0d0l-q48KAph8EO?usp=sharing)
 - Sen2_MTC is collected from the public-avalible Sentinel-2 by ourselves. There are 50 non-overlap tiles, each has 70 images with size = (256, 256), channels = 4 (R, G, B, NIR) and pixel value range [0, 10000].
 - You can use the python script ```train_crop.py``` to split the data into train/val/test.
 
 ### Pretrained model
-We share two CTGAN pretrained models, one is trained on Sen2_MTC, another is trained on the STGAN dataset.
-[CTGAN_Sen2](https://drive.google.com/drive/folders/1-kOSEhogEvmataXAdM3Zq2B_5oPk7tV0?usp=sharing)   
-[CTGAN_STGAN_dataset](https://drive.google.com/drive/folders/19EiiqATFhJwv19RQszrfcPSh0yXr_GqJ?usp=sharing)
+We provide CTGAN pretrained model on Sen2_MTC dataset [here](https://drive.google.com/drive/folders/1-kOSEhogEvmataXAdM3Zq2B_5oPk7tV0?usp=sharing).   
 
 ### Inference
 - You should first download the pretrained models from [Pretrained model](###Pretrained-model) or train CTGAN by yourself.
