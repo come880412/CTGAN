@@ -1,13 +1,14 @@
 import numpy as np
-# import rasterio
+import random
 import os
-import matplotlib.pyplot as plt
-from skimage.measure import compare_psnr, compare_ssim
+
 from PIL import Image
+import cv2
+
 import torch
 import torch.nn as nn
-import cv2
-from torch.autograd import Variable
+
+from skimage.measure import compare_psnr, compare_ssim
 
 def set_requires_grad(nets, requires_grad=False):
     if not isinstance(nets, list):
@@ -17,55 +18,35 @@ def set_requires_grad(nets, requires_grad=False):
             for param in net.parameters():
                 param.requires_grad = requires_grad
 
-def heatmap(img):
+def get_heatmap(img):
     if len(img.shape) == 3:
-        b,h,w = img.shape
+        b, h, w = img.shape
         heat = np.zeros((b,3,h,w)).astype('uint8')
         for i in range(b):
             heat[i,:,:,:] = np.transpose(cv2.applyColorMap(img[i,:,:],cv2.COLORMAP_JET),(2,0,1))
     else:
-        b,c,h,w = img.shape
+        b, c, h, w = img.shape
         heat = np.zeros((b,3,h,w)).astype('uint8')
         for i in range(b):
             heat[i,:,:,:] = np.transpose(cv2.applyColorMap(img[i,0,:,:],cv2.COLORMAP_JET),(2,0,1))
     return heat
 
-def save_heatmap(cloud_mask, save_path):
+def save_heatmap(cloud_mask, save_path, image_name):
     for idx, mask_ in enumerate(cloud_mask):
-        mask = mask_.cpu().numpy()[0] * 255
-        mask = heatmap(mask.astype('uint8'))[0]
+        mask = mask_.cpu().numpy() * 255
+        mask = get_heatmap(mask.astype('uint8'))[0]
         mask = np.transpose(mask, (1,2,0))
         mask = cv2.cvtColor(mask, cv2.COLOR_BGR2RGB)
-        cv2.imwrite(save_path + '_maskA%d.png' % (idx+1), mask)
 
-def TIF_to_RGB(img, save_path):
-    image = img.mul(0.5).add_(0.5)
+        cv2.imwrite(os.path.join(save_path, image_name + f'_maskA{idx+1}.png'), mask)
+
+def get_rgb(image):
+    image = image.mul(0.5).add_(0.5)
     image = image.squeeze()
     image = image.mul(10000).add_(0.5).clamp_(0, 10000)
     image = image.permute(1, 2, 0).cpu().detach().numpy()
-    rgb_image = get_rgb(image.astype(np.uint16), save_path)
-    return rgb_image
+    image = image.astype(np.uint16)
 
-def save_image(image, save_path):
-    for idx, real in enumerate(image):
-        real_A = real[0]
-        _ = TIF_to_RGB(real_A, save_path + '_real_A%d.png' % (idx + 1))
-
-def val_pnsr_and_ssim(cloudfree, predict):
-    psnr = compare_psnr(cloudfree, predict)
-    ssim = compare_ssim(cloudfree, predict, multichannel = True, gaussian_weights = True, use_sample_covariance = False, sigma = 1.5)
-    return psnr, ssim
-
-def PSNR_SSIM(cloudless, predict, save_path):
-    # predict = np.array(tiff.imread('./image_out/valid_combined/%s/fake_B.tif' % (site_name)), np.float32)
-    # print(save_path + 'fake_B.png')
-    predict_rgb = get_rgb(predict, save_path + 'fake_B.png')
-    cloudless_rgb = get_rgb(cloudless, save_path + 'real_B.png')
-    psnr, ssim = val_pnsr_and_ssim(cloudless_rgb, predict_rgb)
-
-    return psnr, ssim
-
-def get_rgb(image, save_path):
     r = image[:,:,0]
     g = image[:,:,1]
     b = image[:,:,2]
@@ -87,10 +68,34 @@ def get_rgb(image, save_path):
     rgb[np.isnan(rgb)] = np.nanmean(rgb)
     rgb = rgb.astype(np.uint8)
 
-    save_image = Image.fromarray(rgb)
-    save_image.save(save_path)
-    return np.array(save_image)
+    return rgb
 
+def save_image(image, save_path, image_name):
+    image = Image.fromarray(image)
+    image.save(os.path.join(save_path, image_name))
+
+def psnr_ssim_cal(cloudfree, predict):
+    psnr = compare_psnr(cloudfree, predict)
+    ssim = compare_ssim(cloudfree, predict, multichannel = True, gaussian_weights = True, use_sample_covariance = False, sigma = 1.5)
+    return psnr, ssim
+
+def PSNR_SSIM(cloudless, predict, save_path):
+    predict_rgb = get_rgb(predict, save_path + 'fake_B.png')
+    cloudless_rgb = get_rgb(cloudless, save_path + 'real_B.png')
+    psnr, ssim = psnr_ssim_cal(cloudless_rgb, predict_rgb)
+
+    return psnr, ssim
+
+def set_seed(seed):
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    np.random.seed(seed)
+    random.seed(seed)
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True
+
+# Ref: https://github.com/ermongroup/STGAN/blob/master/models/networks.py
 class GANLoss(nn.Module):
     def __init__(self, gan_mode, target_real_label=1.0, target_fake_label=0.0):
         super(GANLoss, self).__init__()
