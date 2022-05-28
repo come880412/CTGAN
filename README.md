@@ -1,18 +1,18 @@
 # CTGAN.Pytorch
-ICIP 2022: TBD
+ICIP 2022: CTGAN : Cloud Transformer Generative Adversarial Network
 
 ## Proposed model
 ### Generator
 The overall structure of our proposed CTGAN is illustrated below. We focus more on the design of the feature extractor and processing of the sequential features. We refer to the conformer module, the modified version of Transformer, intending to make the downsampled sequential features find the most critical representation.
-<img src="https://github.com/come880412/CTGAN/blob/main/img/Generator.jpg" width=100% height=100%>
+<img src="https://github.com/come880412/CTGAN/blob/main/images/Generator.jpg" width=100% height=100%>
 
 ### Feature Extractor
 In the feature extractor, we introduce the auxiliary generator and atrous convolution. The former makes the feature extractor converge faster, while the latter enables a larger receptive field in the early stage. In addition, we design a module for detecting the cloud_mask, using it to keep the weight of the cloud-free regions while throwing out the weight of cloudy regions.
-<img src="https://github.com/come880412/CTGAN/blob/main/img/Feature_extractor.jpg" width=100% height=100%>
+<img src="https://github.com/come880412/CTGAN/blob/main/images/Feature_extractor.jpg" width=100% height=100%>
 
-## Visualization
+## Visualization results
 <p align="center">
- <img src="https://github.com/come880412/CTGAN/blob/main/img/visualization.jpg" width=50% height=50%>
+ <img src="https://github.com/come880412/CTGAN/blob/main/images/visualization.jpg" width=50% height=50%>
 </p>
 
 ## Getting started
@@ -21,11 +21,12 @@ In the feature extractor, we introduce the auxiliary generator and atrous convol
 git clone https://github.com/come880412/CTGAN.git
 cd CTGAN
 ```
+
 ### Computer equipments
 - System: Ubuntu20.04
 - Python version: Python 3.6 or higher
 - Training:\
-  CPU: Intel(R) Xeon(R) Gold 5218 CPU @ 2.30GHz\
+  CPU: Intel(R) Xeon(R) Gold 6226R CPU @ 2.90GHz\
   RAM: 256GB\
   GPU: NVIDIA GeForce RTX 3090 24GB
 
@@ -36,21 +37,21 @@ Please see the ```requirements.txt``` for more details.
 
 Please download the dataset from [Sen2_MTC](https://drive.google.com/drive/folders/1xUmr8wTWXPnINKlxr0d0l-q48KAph8EO?usp=sharing)
 - Sen2_MTC is collected from the public-avalible Sentinel-2 by ourselves. There are 50 non-overlap tiles, each has 70 images with size = (256, 256), channels = 4 (R, G, B, NIR) and pixel value range [0, 10000].
-- You can use the python script ```train_crop.py``` to split the data into train/val/test.
+- You can use the python script ```train_val_split.py``` to split the data into train/val/test. Or, you can use the .txt files provided by us to ensure we have the same train/val/test sets.
 
 ### Pretrained model
-We provide CTGAN pretrained model on Sen2_MTC dataset [here](https://drive.google.com/drive/folders/1-kOSEhogEvmataXAdM3Zq2B_5oPk7tV0?usp=sharing).   
+We provide CTGAN pretrained model on the Sen2_MTC dataset. You can download the pretrained models from [here](https://drive.google.com/drive/folders/1-kOSEhogEvmataXAdM3Zq2B_5oPk7tV0?usp=sharing).   
 
 ### Inference
 - You should first download the pretrained models from [Pretrained model](###Pretrained-model) or train CTGAN by yourself.
 ``` bash
-python test.py  --gen_checkpoint_path path/to/model --val_path path/to/val.txt --test_path path/to/test.txt
+python test.py  --load_gen path/to/model --root path/to/dataset --test_mode val/test
 ```
 
 ### Training
-- Train from scratch
+- You can use the following command to train CTGAN from scratch
 ``` bash
-python train.py --train_path path/to/train.txt --val_path path/to/val.txt --dataset_name Sen2_MTC_CTGAN --batch_size 4
+python train.py --root path/to/dataset --cloud_model_path path/to/Feature_Extrator_FS2.pth --dataset_name Sen2_MTC --batch_size 4 --load_gen '' --load_dis '' 
 ```
 - You can monitor the training process using ```$ tensorboard --logdir=runs``` and then go to the URL [http://localhost:6006/](http://localhost:6006/)
 - If you have any implementation problems, please feel free to e-mail me! come880412@gmail.com
