@@ -4,7 +4,7 @@ ICIP 2022: TBD
 ## Proposed model
 ### Generator
 The overall structure of our proposed CTGAN is illustrated below. We focus more on the design of the feature extractor and processing of the sequential features. We refer to the conformer module, the modified version of Transformer, intending to make the downsampled sequential features find the most critical representation.
-<img src="https://github.com/come880412/CTGAN/blob/main/img/Generator.png" width=100% height=100%>
+<img src="https://github.com/come880412/CTGAN/blob/main/img/Generator.jpg" width=100% height=100%>
 
 ### Feature Extractor
 In the feature extractor, we introduce the auxiliary generator and atrous convolution. The former makes the feature extractor converge faster, while the latter enables a larger receptive field in the early stage. In addition, we design a module for detecting the cloud_mask, using it to keep the weight of the cloud-free regions while throwing out the weight of cloudy regions.
@@ -34,14 +34,12 @@ Please see the ```requirements.txt``` for more details.
 
 ### Prepare data
 
-Please download the dataset from [Sen2_MTC](https://drive.google.com/drive/folders/1xUmr8wTWXPnINKlxr0d0l-q48KAph8EO?usp=sharing) and [STGAN dataset](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/BSETKZ).
+Please download the dataset from [Sen2_MTC](https://drive.google.com/drive/folders/1xUmr8wTWXPnINKlxr0d0l-q48KAph8EO?usp=sharing)
 - Sen2_MTC is collected from the public-avalible Sentinel-2 by ourselves. There are 50 non-overlap tiles, each has 70 images with size = (256, 256), channels = 4 (R, G, B, NIR) and pixel value range [0, 10000].
 - You can use the python script ```train_crop.py``` to split the data into train/val/test.
 
 ### Pretrained model
-We share two CTGAN pretrained models, one is trained on Sen2_MTC, another is trained on the STGAN dataset.
-[CTGAN_Sen2](https://drive.google.com/drive/folders/1-kOSEhogEvmataXAdM3Zq2B_5oPk7tV0?usp=sharing)   
-[CTGAN_STGAN_dataset](https://drive.google.com/drive/folders/19EiiqATFhJwv19RQszrfcPSh0yXr_GqJ?usp=sharing)
+We provide CTGAN pretrained model on Sen2_MTC dataset [here](https://drive.google.com/drive/folders/1-kOSEhogEvmataXAdM3Zq2B_5oPk7tV0?usp=sharing).   
 
 ### Inference
 - You should first download the pretrained models from [Pretrained model](###Pretrained-model) or train CTGAN by yourself.
@@ -54,5 +52,5 @@ python test.py  --gen_checkpoint_path path/to/model --val_path path/to/val.txt -
 ``` bash
 python train.py --train_path path/to/train.txt --val_path path/to/val.txt --dataset_name Sen2_MTC_CTGAN --batch_size 4
 ```
-- If your D_loss is approximately zero, you should add the noise term on the ground-truth label of the discriminator. (see ```utils.py``` for more details.)
 - You can monitor the training process using ```$ tensorboard --logdir=runs``` and then go to the URL [http://localhost:6006/](http://localhost:6006/)
+- If you have any implementation problems, please feel free to e-mail me! come880412@gmail.com
