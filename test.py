@@ -64,7 +64,7 @@ def test_and_visualization(opt, model_GEN, test_loader, criterion):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     """Path"""
-    parser.add_argument("--gen_checkpoint_path", type=str, default='./Pretrain/CTGAN-Sen2_MTC/G_epoch97_PSNR21.259.pth', help="which checkpoint you want to use for generator")
+    parser.add_argument("--load_gen", type=str, default='./Pretrain/CTGAN-Sen2_MTC/G_epoch97_PSNR21.259.pth', help="which checkpoint you want to use for generator")
     parser.add_argument("--predict_image_path", type=str, default='./image_out', help="name of the dataset_list")
     parser.add_argument("--root", type=str, default='../dataset/Sen2_MTC', help="Path to dataset")
 
@@ -89,7 +89,7 @@ if __name__ == "__main__":
 
     """define model & optimizer"""
     model_GEN = CTGAN_Generator(opt.image_size)
-    model_GEN.load_state_dict(torch.load(opt.gen_checkpoint_path))
+    model_GEN.load_state_dict(torch.load(opt.load_gen))
     print('load transformer model successfully!')
     model_GEN = model_GEN.cuda()
 
