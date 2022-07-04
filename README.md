@@ -58,5 +58,5 @@ python train.py --root path/to/dataset --cloud_model_path path/to/Feature_Extrat
 - You can monitor the training process using ```$ tensorboard --logdir=runs``` and then go to the URL [http://localhost:6006/](http://localhost:6006/)
 - If you have any implementation problems, please feel free to e-mail me! come880412@gmail.com
 
-### Credits
+### Acknowledgements
 Our developed CTGAN was inspired by STGAN ([paper here](https://arxiv.org/abs/1912.06838)) and SPAGAN([paper here](https://arxiv.org/abs/2009.13015)) architectures. Thanks for your contributions to the community.
