@@ -9,6 +9,10 @@ from einops.layers.torch import Rearrange
 
 
 # Atrous conv Module
+"""
+Ref: https://github.com/VainF/DeepLabV3Plus-Pytorch/blob/master/network/_deeplab.py
+"""
+
 class ASPPConv(nn.Sequential):
     def __init__(self, in_channels, out_channels, dilation):
         modules = [

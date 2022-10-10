@@ -80,8 +80,8 @@ if __name__ == "__main__":
     parser.add_argument("--gpu_id", type=str, default='0', help="gpu id")
     opt = parser.parse_args()
 
-    random_seed_general = 412
-    random.seed(random_seed_general)  # random package
+    random_seed_general = 2022
+    fixed_seed(random_seed_general)
     os.makedirs(os.path.join(opt.predict_image_path, opt.test_mode), exist_ok=True)
 
     test_data = Sen2_MTC(opt, opt.test_mode)

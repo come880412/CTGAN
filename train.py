@@ -216,7 +216,7 @@ if __name__ == "__main__":
     """Parameters"""
     parser.add_argument("--n_epochs", type=int, default=100, help="Number of epochs")
     parser.add_argument("--gan_mode", type=str, default='lsgan', help="Which gan mode(lsgan/vanilla)")
-    parser.add_argument("--optimizer", type=str, default='Adam', help="optimizer you want to use(Adam/SGD)")
+    parser.add_argument("--optimizer", type=str, default='AdamW', help="optimizer you want to use(AdamW/SGD)")
     parser.add_argument("--lr", type=float, default=5e-4, help="learning rate")   
     parser.add_argument("--workers", type=int, default=0, help="number of cpu threads to use during batch generation")
     parser.add_argument("--batch_size", type=int, default=2, help="size of the batches")
@@ -239,12 +239,12 @@ if __name__ == "__main__":
     
     os.makedirs(os.path.join(opt.save_model_path, opt.dataset_name), exist_ok=True)
     os.makedirs(os.path.join(opt.predict_image_path, 'val') , exist_ok=True)
-    set_seed(opt.manual_seed)
+    fixed_seed(opt.manual_seed)
 
     train_data = Sen2_MTC(opt, 'train')
     val_data = Sen2_MTC(opt, mode = 'val')
 
-    train_loader = DataLoader(train_data, batch_size=opt.batch_size,shuffle=True, num_workers=opt.workers)
+    train_loader = DataLoader(train_data, batch_size=opt.batch_size,shuffle=True, num_workers=opt.workers, drop_last=True)
     val_loader = DataLoader(val_data, batch_size=opt.batch_size, shuffle=False, num_workers=opt.workers, drop_last=False)
 
     # Pretrained model on FS2 dataset
@@ -266,9 +266,9 @@ if __name__ == "__main__":
         GEN.load_state_dict(torch.load(opt.load_gen))
         DIS.load_state_dict(torch.load(opt.load_dis))
     
-    if opt.optimizer == 'Adam':
-        optimizer_G = torch.optim.Adam(GEN.parameters(), lr=opt.lr, betas=(0.5, 0.999))
-        optimizer_D = torch.optim.Adam(DIS.parameters(), lr=opt.lr, betas=(0.5, 0.999))
+    if opt.optimizer == 'AdamW':
+        optimizer_G = torch.optim.AdamW(GEN.parameters(), lr=opt.lr, betas=(0.5, 0.999), weight_decay=5e-4)
+        optimizer_D = torch.optim.AdamW(DIS.parameters(), lr=opt.lr, betas=(0.5, 0.999), weight_decay=5e-4)
     if opt.optimizer == 'SGD':
         optimizer_G = torch.optim.SGD(GEN.parameters(), lr=opt.lr, momentum=0.9, nesterov=True)
         optimizer_D = torch.optim.SGD(DIS.parameters(), lr=opt.lr, momentum=0.9, nesterov=True)

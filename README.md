@@ -1,5 +1,6 @@
 # CTGAN.Pytorch (Official)
 ICIP 2022: CTGAN : Cloud Transformer Generative Adversarial Network \
+Paper link: TBD
 Authors:
 [Gi-Luen Huang](r09942171@ntu.edu.tw), [Pei-Yuan Wu](https://www.ee.ntu.edu.tw/profile1.php?teacher_id=24038)
 
@@ -20,7 +21,7 @@ In the feature extractor, we introduce the auxiliary generator and atrous convol
 ## Getting started
 - Clone this repo to your local
 ``` bash
-git clone https://github.com/come880412/CTGAN.git
+git clone git@github.com:come880412/CTGAN.git
 cd CTGAN
 ```
 

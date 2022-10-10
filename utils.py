@@ -10,6 +10,16 @@ import torch.nn as nn
 
 from skimage.measure import compare_psnr, compare_ssim
 
+def fixed_seed(myseed):
+    np.random.seed(myseed)
+    random.seed(myseed)
+    torch.manual_seed(myseed)
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(myseed)
+        torch.cuda.manual_seed(myseed)
+
 def set_requires_grad(nets, requires_grad=False):
     if not isinstance(nets, list):
         nets = [nets]
@@ -18,6 +28,9 @@ def set_requires_grad(nets, requires_grad=False):
             for param in net.parameters():
                 param.requires_grad = requires_grad
 
+"""
+Ref: https://github.com/Penn000/SpA-GAN_for_cloud_removal/blob/master/utils.py
+"""
 def get_heatmap(img):
     if len(img.shape) == 3:
         b, h, w = img.shape
@@ -40,6 +53,9 @@ def save_heatmap(cloud_mask, save_path, image_name):
 
         cv2.imwrite(os.path.join(save_path, image_name + f'_maskA{idx+1}.png'), mask)
 
+"""
+Ref: https://github.com/ameraner/dsen2-cr/blob/main/Code/tools/dataIO.py
+"""
 def get_rgb(image):
     image = image.mul(0.5).add_(0.5)
     image = image.squeeze()
@@ -86,16 +102,9 @@ def PSNR_SSIM(cloudless, predict, save_path):
 
     return psnr, ssim
 
-def set_seed(seed):
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
-    np.random.seed(seed)
-    random.seed(seed)
-    torch.backends.cudnn.benchmark = False
-    torch.backends.cudnn.deterministic = True
-
-# Ref: https://github.com/ermongroup/STGAN/blob/master/models/networks.py
+"""
+Ref: https://github.com/ermongroup/STGAN/blob/master/models/networks.py
+"""
 class GANLoss(nn.Module):
     def __init__(self, gan_mode, target_real_label=1.0, target_fake_label=0.0):
         super(GANLoss, self).__init__()
