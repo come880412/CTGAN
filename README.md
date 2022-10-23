@@ -1,6 +1,6 @@
 # CTGAN.Pytorch (Official)
 ICIP 2022: CTGAN : Cloud Transformer Generative Adversarial Network \
-Paper link: TBD
+[Paper link](https://ieeexplore.ieee.org/document/9897229) \
 Authors:
 [Gi-Luen Huang](r09942171@ntu.edu.tw), [Pei-Yuan Wu](https://www.ee.ntu.edu.tw/profile1.php?teacher_id=24038)
 
@@ -61,3 +61,16 @@ python train.py --root path/to/dataset --cloud_model_path path/to/Feature_Extrat
 
 ### Acknowledgements
 Our developed CTGAN was inspired by STGAN ([paper here](https://arxiv.org/abs/1912.06838)) and SPAGAN([paper here](https://arxiv.org/abs/2009.13015)) architectures. Thanks for your contributions to the community.
+
+### Citation
+```
+@INPROCEEDINGS{9897229,
+  author={Huang, Gi-Luen and Wu, Pei-Yuan},
+  booktitle={2022 IEEE International Conference on Image Processing (ICIP)}, 
+  title={CTGAN : Cloud Transformer Generative Adversarial Network}, 
+  year={2022},
+  volume={},
+  number={},
+  pages={511-515},
+  doi={10.1109/ICIP46576.2022.9897229}}
+```
