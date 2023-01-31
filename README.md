@@ -38,7 +38,7 @@ Please see the ```requirements.txt``` for more details.
 
 ### Prepare data
 
-Please download the dataset from [Sen2_MTC](https://drive.google.com/drive/folders/1xUmr8wTWXPnINKlxr0d0l-q48KAph8EO?usp=sharing)
+Please download the dataset from [Sen2_MTC](https://drive.google.com/file/d/1-hDX9ezWZI2OtiaGbE8RrKJkN1X-ZO1P/view?usp=share_link)
 - Sen2_MTC is collected from the public-avalible Sentinel-2 by ourselves. There are 50 non-overlap tiles, each has 70 images with size = (256, 256), channels = 4 (R, G, B, NIR) and pixel value range [0, 10000].
 - You can use the python script ```train_val_split.py``` to split the data into train/val/test. Or, you can use the .txt files provided by us to ensure we have the same train/val/test sets.
 
