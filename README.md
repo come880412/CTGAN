@@ -43,10 +43,10 @@ Please download the dataset from [Sen2_MTC](https://drive.google.com/file/d/1-hD
 - You can use the python script ```train_val_split.py``` to split the data into train/val/test. Or, you can use the .txt files provided by us to ensure we have the same train/val/test sets.
 
 ### Pretrained model
-We provide CTGAN pretrained model on the Sen2_MTC dataset. You can download the pretrained models from [here](https://drive.google.com/drive/folders/1-kOSEhogEvmataXAdM3Zq2B_5oPk7tV0?usp=sharing).   
+We provide CTGAN pretrained model on the Sen2_MTC dataset. You can download the pretrained models from [here](https://drive.google.com/file/d/1-hDX9ezWZI2OtiaGbE8RrKJkN1X-ZO1P/view?usp=share_link).   
 
 ### Inference
-- You should first download the pretrained models from [Pretrained model](###Pretrained-model) or train CTGAN by yourself.
+- You should first download the pretrained models from [here](https://drive.google.com/file/d/1-hDX9ezWZI2OtiaGbE8RrKJkN1X-ZO1P/view?usp=share_link) or train CTGAN by yourself.
 ``` bash
 python test.py  --load_gen path/to/model --root path/to/dataset --test_mode val/test
 ```
