@@ -2,7 +2,7 @@
 ICIP 2022: CTGAN : Cloud Transformer Generative Adversarial Network \
 [Paper link](https://ieeexplore.ieee.org/document/9897229) \
 Authors:
-[Gi-Luen Huang](r09942171@ntu.edu.tw), [Pei-Yuan Wu](https://www.ee.ntu.edu.tw/profile1.php?teacher_id=24038)
+[Gi-Luen Huang](https://come880412.github.io), [Pei-Yuan Wu](https://www.ee.ntu.edu.tw/profile1.php?teacher_id=24038)
 
 ## Proposed model
 ### Generator
